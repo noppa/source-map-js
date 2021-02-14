@@ -1,10 +1,11 @@
 {
-  "name": "source-map",
+  "name": "source-map-sync",
   "description": "Generates and consumes source maps",
-  "version": "0.8.0-beta.0",
+  "version": "0.0.0",
   "homepage": "https://github.com/mozilla/source-map",
-  "author": "Nick Fitzgerald <nfitzgerald@mozilla.com>",
+  "author": "Valentin Semirulnik <v7rulnik@gmail.com>",
   "contributors": [
+    "Nick Fitzgerald <nfitzgerald@mozilla.com>",
     "Tobias Koppers <tobias.koppers@googlemail.com>",
     "Duncan Beevers <duncan@dweebd.com>",
     "Stephen Crane <scrane@mozilla.com>",
