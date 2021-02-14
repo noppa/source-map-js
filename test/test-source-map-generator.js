@@ -5,10 +5,8 @@
  * http://opensource.org/licenses/BSD-3-Clause
  */
 
-const SourceMapGenerator = require("../lib/source-map-generator")
-  .SourceMapGenerator;
-const SourceMapConsumer = require("../lib/source-map-consumer")
-  .SourceMapConsumer;
+const SourceMapGenerator = require("../lib/source-map-generator").SourceMapGenerator;
+const SourceMapConsumer = require("../lib/source-map-consumer").SourceMapConsumer;
 const SourceNode = require("../lib/source-node").SourceNode;
 const util = require("./util");
 
@@ -118,9 +116,7 @@ exports["test adding mappings with skipValidation"] = function(assert) {
   }, /Invalid mapping/);
 };
 
-exports["test that the correct mappings are being generated"] = function(
-  assert
-) {
+exports["test that the correct mappings are being generated"] = function(assert) {
   let map = new SourceMapGenerator({
     file: "min.js",
     sourceRoot: "/the/root"
@@ -203,9 +199,7 @@ exports["test that the correct mappings are being generated"] = function(
   util.assertEqualMaps(assert, map, util.testMap);
 };
 
-exports[
-  "test that adding a mapping with an empty string name does not break generation"
-] = function(assert) {
+exports["test that adding a mapping with an empty string name does not break generation"] = function(assert) {
   const map = new SourceMapGenerator({
     file: "generated-foo.js",
     sourceRoot: "."
@@ -247,65 +241,49 @@ exports["test that source content can be set"] = function(assert) {
   assert.equal(map.sourcesContent[1], null);
 };
 
-exports["test .fromSourceMap"] = async function(assert) {
-  const smc = await new SourceMapConsumer(util.testMap);
+exports["test .fromSourceMap"] = function(assert) {
+  const smc = new SourceMapConsumer(util.testMap);
   const map = SourceMapGenerator.fromSourceMap(smc);
   smc.destroy();
   util.assertEqualMaps(assert, map.toJSON(), util.testMap);
 };
 
-exports["test .fromSourceMap with sourcesContent"] = async function(assert) {
-  const smc = await new SourceMapConsumer(util.testMapWithSourcesContent);
+exports["test .fromSourceMap with sourcesContent"] = function(assert) {
+  const smc = new SourceMapConsumer(util.testMapWithSourcesContent);
   const map = SourceMapGenerator.fromSourceMap(smc);
   smc.destroy();
   util.assertEqualMaps(assert, map.toJSON(), util.testMapWithSourcesContent);
 };
 
-exports["test .fromSourceMap with single source"] = async function(assert) {
-  const smc = await new SourceMapConsumer(util.testMapSingleSource);
+exports["test .fromSourceMap with single source"] = function(assert) {
+  const smc = new SourceMapConsumer(util.testMapSingleSource);
   const map = SourceMapGenerator.fromSourceMap(smc);
   smc.destroy();
   util.assertEqualMaps(assert, map.toJSON(), util.testMapSingleSource);
 };
 
-exports["test .fromSourceMap with empty mappings"] = async function(assert) {
-  const smc = await new SourceMapConsumer(util.testMapEmptyMappings);
+exports["test .fromSourceMap with empty mappings"] = function(assert) {
+  const smc = new SourceMapConsumer(util.testMapEmptyMappings);
   const map = SourceMapGenerator.fromSourceMap(smc);
   smc.destroy();
   util.assertEqualMaps(assert, map.toJSON(), util.testMapEmptyMappings);
 };
 
-exports[
-  "test .fromSourceMap with empty mappings and relative sources"
-] = async function(assert) {
-  const smc = await new SourceMapConsumer(
-    util.testMapEmptyMappingsRelativeSources
-  );
+exports["test .fromSourceMap with empty mappings and relative sources"] = function(assert) {
+  const smc = new SourceMapConsumer(util.testMapEmptyMappingsRelativeSources);
   const map = SourceMapGenerator.fromSourceMap(smc);
   smc.destroy();
-  util.assertEqualMaps(
-    assert,
-    map.toJSON(),
-    util.testMapEmptyMappingsRelativeSources_generatedExpected
-  );
+  util.assertEqualMaps(assert, map.toJSON(), util.testMapEmptyMappingsRelativeSources_generatedExpected);
 };
 
-exports[
-  "test .fromSourceMap with multiple sources where mappings refers only to single source"
-] = async function(assert) {
-  const smc = await new SourceMapConsumer(
-    util.testMapMultiSourcesMappingRefersSingleSourceOnly
-  );
+exports["test .fromSourceMap with multiple sources where mappings refers only to single source"] = function(assert) {
+  const smc = new SourceMapConsumer(util.testMapMultiSourcesMappingRefersSingleSourceOnly);
   const map = SourceMapGenerator.fromSourceMap(smc);
   smc.destroy();
-  util.assertEqualMaps(
-    assert,
-    map.toJSON(),
-    util.testMapMultiSourcesMappingRefersSingleSourceOnly
-  );
+  util.assertEqualMaps(assert, map.toJSON(), util.testMapMultiSourcesMappingRefersSingleSourceOnly);
 };
 
-exports["test applySourceMap"] = async function(assert) {
+exports["test applySourceMap"] = function(assert) {
   let node = new SourceNode(null, null, null, [
     new SourceNode(2, 0, "fileX", "lineX2\n"),
     "genA1\n",
@@ -355,11 +333,11 @@ exports["test applySourceMap"] = async function(assert) {
   expectedMap = expectedMap.toJSON();
 
   // apply source map "mapStep1" to "mapStep2"
-  let smc = await new SourceMapConsumer(mapStep2);
+  let smc = new SourceMapConsumer(mapStep2);
   const generator = SourceMapGenerator.fromSourceMap(smc);
   smc.destroy();
 
-  smc = await new SourceMapConsumer(mapStep1);
+  smc = new SourceMapConsumer(mapStep1);
   generator.applySourceMap(smc);
   smc.destroy();
 
@@ -367,16 +345,14 @@ exports["test applySourceMap"] = async function(assert) {
   util.assertEqualMaps(assert, actualMap, expectedMap);
 };
 
-exports["test applySourceMap throws when file is missing"] = async function(
-  assert
-) {
+exports["test applySourceMap throws when file is missing"] = function(assert) {
   const map = new SourceMapGenerator({
     file: "test.js"
   });
   const map2 = new SourceMapGenerator();
 
   let error;
-  const smc = await new SourceMapConsumer(map2.toJSON());
+  const smc = new SourceMapConsumer(map2.toJSON());
   try {
     map.applySourceMap(smc);
   } catch (e) {
@@ -387,9 +363,7 @@ exports["test applySourceMap throws when file is missing"] = async function(
   assert.ok(error instanceof Error);
 };
 
-exports[
-  "test the two additional parameters of applySourceMap"
-] = async function(assert) {
+exports["test the two additional parameters of applySourceMap"] = function(assert) {
   // Assume the following directory structure:
   //
   // http://foo.org/
@@ -429,7 +403,7 @@ exports[
     source: "http://www.example.com/baz.coffee"
   });
   bundleMap.setSourceContent("http://www.example.com/baz.coffee", "baz coffee");
-  bundleMap = await new SourceMapConsumer(bundleMap.toJSON());
+  bundleMap = new SourceMapConsumer(bundleMap.toJSON());
 
   let minifiedMap = new SourceMapGenerator({
     file: "bundle.min.js",
@@ -450,7 +424,7 @@ exports[
     original: { line: 23, column: 23 },
     source: "temp/bundle.js"
   });
-  minifiedMap = await new SourceMapConsumer(minifiedMap.toJSON());
+  minifiedMap = new SourceMapConsumer(minifiedMap.toJSON());
 
   const expectedMap = function(sources) {
     const map = new SourceMapGenerator({
@@ -489,21 +463,13 @@ exports[
   util.assertEqualMaps(
     assert,
     actualMap("../temp/temp_maps"),
-    expectedMap([
-      "coffee/foo.coffee",
-      "/bar.coffee",
-      "http://www.example.com/baz.coffee"
-    ])
+    expectedMap(["coffee/foo.coffee", "/bar.coffee", "http://www.example.com/baz.coffee"])
   );
 
   util.assertEqualMaps(
     assert,
     actualMap("/app/temp/temp_maps"),
-    expectedMap([
-      "/app/coffee/foo.coffee",
-      "/bar.coffee",
-      "http://www.example.com/baz.coffee"
-    ])
+    expectedMap(["/app/coffee/foo.coffee", "/bar.coffee", "http://www.example.com/baz.coffee"])
   );
 
   util.assertEqualMaps(
@@ -522,52 +488,36 @@ exports[
   util.assertEqualMaps(
     assert,
     actualMap(),
-    expectedMap([
-      "../coffee/foo.coffee",
-      "/bar.coffee",
-      "http://www.example.com/baz.coffee"
-    ])
+    expectedMap(["../coffee/foo.coffee", "/bar.coffee", "http://www.example.com/baz.coffee"])
   );
 
   util.assertEqualMaps(
     assert,
     actualMap(""),
-    expectedMap([
-      "../coffee/foo.coffee",
-      "/bar.coffee",
-      "http://www.example.com/baz.coffee"
-    ])
+    expectedMap(["../coffee/foo.coffee", "/bar.coffee", "http://www.example.com/baz.coffee"])
   );
 
   util.assertEqualMaps(
     assert,
     actualMap("."),
-    expectedMap([
-      "../coffee/foo.coffee",
-      "/bar.coffee",
-      "http://www.example.com/baz.coffee"
-    ])
+    expectedMap(["../coffee/foo.coffee", "/bar.coffee", "http://www.example.com/baz.coffee"])
   );
 
   util.assertEqualMaps(
     assert,
     actualMap("./"),
-    expectedMap([
-      "../coffee/foo.coffee",
-      "/bar.coffee",
-      "http://www.example.com/baz.coffee"
-    ])
+    expectedMap(["../coffee/foo.coffee", "/bar.coffee", "http://www.example.com/baz.coffee"])
   );
 
   bundleMap.destroy();
   minifiedMap.destroy();
 };
 
-exports["test applySourceMap name handling"] = async function(assert) {
+exports["test applySourceMap name handling"] = function(assert) {
   // Imagine some CoffeeScript code being compiled into JavaScript and then
   // minified.
 
-  const assertName = async function(coffeeName, jsName, expectedName) {
+  const assertName = function(coffeeName, jsName, expectedName) {
     const minifiedMap = new SourceMapGenerator({
       file: "test.js.min"
     });
@@ -588,11 +538,11 @@ exports["test applySourceMap name handling"] = async function(assert) {
       name: coffeeName
     });
 
-    let consumer = await new SourceMapConsumer(coffeeMap.toJSON());
+    let consumer = new SourceMapConsumer(coffeeMap.toJSON());
     minifiedMap.applySourceMap(consumer);
     consumer.destroy();
 
-    consumer = await new SourceMapConsumer(minifiedMap.toJSON());
+    consumer = new SourceMapConsumer(minifiedMap.toJSON());
     consumer.eachMapping(function(mapping) {
       assert.equal(mapping.name, expectedName);
     });
@@ -604,23 +554,23 @@ exports["test applySourceMap name handling"] = async function(assert) {
   // provide names in its source maps. Minifiers do rename variables and
   // therefore do provide names in their source maps. So that name should be
   // retained if the original map lacks names.
-  await assertName(null, "foo", "foo");
+  assertName(null, "foo", "foo");
 
   // `foo = 1` -> `var coffee$foo = 1;` -> `var a=1`
   // Imagine that CoffeeScript prefixed all variables with `coffee$`. Even
   // though the minifier then also provides a name, the original name is
   // what corresponds to the source.
-  await assertName("foo", "coffee$foo", "foo");
+  assertName("foo", "coffee$foo", "foo");
 
   // `foo = 1` -> `var coffee$foo = 1;` -> `var coffee$foo=1`
   // Minifiers can turn off variable mangling. Then there’s no need to
   // provide names in the source map, but the names from the original map are
   // still needed.
-  await assertName("foo", null, "foo");
+  assertName("foo", null, "foo");
 
   // `foo = 1` -> `var foo = 1;` -> `var foo=1`
   // No renaming at all.
-  await assertName(null, null, null);
+  assertName(null, null, null);
 };
 
 exports["test sorting with duplicate generated mappings"] = function(assert) {
@@ -743,9 +693,7 @@ exports["test ignore duplicate mappings."] = function(assert) {
   util.assertEqualMaps(assert, map1.toJSON(), map2.toJSON());
 };
 
-exports[
-  "test github issue #72, check for duplicate names or sources"
-] = function(assert) {
+exports["test github issue #72, check for duplicate names or sources"] = function(assert) {
   const map = new SourceMapGenerator({
     file: "test.js"
   });
@@ -770,16 +718,14 @@ exports[
   });
 };
 
-exports["test setting sourcesContent to null when already null"] = function(
-  assert
-) {
+exports["test setting sourcesContent to null when already null"] = function(assert) {
   const smg = new SourceMapGenerator({ file: "foo.js" });
   assert.doesNotThrow(function() {
     smg.setSourceContent("bar.js", null);
   });
 };
 
-exports["test applySourceMap with unexact match"] = async function(assert) {
+exports["test applySourceMap with unexact match"] = function(assert) {
   const map1 = new SourceMapGenerator({
     file: "bundled-source"
   });
@@ -817,48 +763,38 @@ exports["test applySourceMap with unexact match"] = async function(assert) {
     source: "original-source"
   });
 
-  const consumer = await new SourceMapConsumer(map2.toJSON());
+  const consumer = new SourceMapConsumer(map2.toJSON());
   map1.applySourceMap(consumer);
   consumer.destroy();
 
   util.assertEqualMaps(assert, map1.toJSON(), expectedMap.toJSON());
 };
 
-exports["test applySourceMap with empty mappings"] = async function(assert) {
-  let consumer = await new SourceMapConsumer(util.testMapEmptyMappings);
+exports["test applySourceMap with empty mappings"] = function(assert) {
+  let consumer = new SourceMapConsumer(util.testMapEmptyMappings);
   const generator = SourceMapGenerator.fromSourceMap(consumer);
   consumer.destroy();
 
-  consumer = await new SourceMapConsumer(util.testMapEmptyMappings);
+  consumer = new SourceMapConsumer(util.testMapEmptyMappings);
   generator.applySourceMap(consumer);
   consumer.destroy();
 
   util.assertEqualMaps(assert, generator.toJSON(), util.testMapEmptyMappings);
 };
 
-exports[
-  "test applySourceMap with empty mappings and relative sources"
-] = async function(assert) {
-  let consumer = await new SourceMapConsumer(
-    util.testMapEmptyMappingsRelativeSources
-  );
+exports["test applySourceMap with empty mappings and relative sources"] = function(assert) {
+  let consumer = new SourceMapConsumer(util.testMapEmptyMappingsRelativeSources);
   const generator = SourceMapGenerator.fromSourceMap(consumer);
   consumer.destroy();
 
-  consumer = await new SourceMapConsumer(
-    util.testMapEmptyMappingsRelativeSources
-  );
+  consumer = new SourceMapConsumer(util.testMapEmptyMappingsRelativeSources);
   generator.applySourceMap(consumer);
   consumer.destroy();
 
-  util.assertEqualMaps(
-    assert,
-    generator.toJSON(),
-    util.testMapEmptyMappingsRelativeSources_generatedExpected
-  );
+  util.assertEqualMaps(assert, generator.toJSON(), util.testMapEmptyMappingsRelativeSources_generatedExpected);
 };
 
-exports["test issue #192"] = async function(assert) {
+exports["test issue #192"] = function(assert) {
   const generator = new SourceMapGenerator();
   generator.addMapping({
     source: "a.js",
@@ -871,7 +807,7 @@ exports["test issue #192"] = async function(assert) {
     original: { line: 2, column: 20 }
   });
 
-  const consumer = await new SourceMapConsumer(generator.toJSON());
+  const consumer = new SourceMapConsumer(generator.toJSON());
 
   let n = 0;
   consumer.eachMapping(function() {

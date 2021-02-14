@@ -9,7 +9,7 @@ const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
 
-async function run(tests) {
+function run(tests) {
   let total = 0;
   let passed = 0;
 
@@ -18,7 +18,7 @@ async function run(tests) {
       if (/^test/.test(k)) {
         total++;
         try {
-          await tests[i].testCase[k](assert);
+          tests[i].testCase[k](assert);
           passed++;
         } catch (e) {
           console.log("FAILED " + tests[i].name + ": " + k + "!");
@@ -49,17 +49,18 @@ const requires = fs
   .filter(isTestFile)
   .map(toRelativeModule);
 
-run(
-  requires.map(require).map(function(mod, i) {
-    return {
-      name: requires[i],
-      testCase: mod
-    };
-  })
-).then(
-  code => process.exit(code),
-  e => {
-    console.error(e);
-    process.exit(1);
-  }
-);
+try {
+  const code = run(
+    requires.map(require).map(function(mod, i) {
+      return {
+        name: requires[i],
+        testCase: mod
+      };
+    })
+  );
+
+  process.exit(code);
+} catch (e) {
+  console.error(e);
+  process.exit(1);
+}
